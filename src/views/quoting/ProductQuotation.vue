@@ -58,7 +58,7 @@
 
         <el-table-column label="操作" width="140" fixed="right">
           <template #default="{ row }">
-            <el-link :underline="false" icon="Plus" @click="addToQuotation(row)">添加到报价</el-link>
+            <el-link underline="never" icon="Plus" @click="addToQuotation(row)">添加到报价</el-link>
           </template>
         </el-table-column>
       </el-table>

@@ -5,7 +5,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'product-quote',
+      name: 'home',
       // 重定向到产品报价页面
       redirect: '/product-quote',
     },

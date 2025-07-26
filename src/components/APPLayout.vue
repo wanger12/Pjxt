@@ -4,7 +4,7 @@
       <div class="logo p-4 text-center">
         <h1 class="text-white text-xl">报价单</h1>
       </div>
-      <el-menu :default-active="selectedKey" class="el-menu-vertical-demo" background-color="#001529" text-color="#fff"
+      <el-menu default-active="product-quote" class="el-menu-vertical-demo" background-color="#001529" text-color="#fff"
         active-text-color="#ffd04b" @select="selectChange" router>
         <el-menu-item index="product-quote">
           <el-icon>
@@ -23,11 +23,7 @@
 
     <el-container>
       <el-header class="bg-white p-2 flex justify-between items-center">
-        <el-button text @click="toggleCollapsed">
-          <el-icon>
-            <component :is="collapsed ? 'i-ep-expand' : 'i-ep-fold'" />
-          </el-icon>
-        </el-button>
+        <!-- <el-button type="primary" @click="toggleCollapse">折叠</el-button> -->
       </el-header>
 
       <el-main class="site-layout-content">
@@ -40,13 +36,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-const route = useRoute()
-const router = useRouter()
+import { ref, onMounted, nextTick } from 'vue'
 const collapsed = ref(false)
 const loaded = ref(true)
 const selectedKey = ref('product-quote')
+
+onMounted(() => {
+  // Ensure the initial state is set correctly
+  nextTick(() => {
+    selectChange(selectedKey.value)
+  })
+})
 const selectChange = (key: string) => {
   console.log('Selected key:', key)
   selectedKey.value = key

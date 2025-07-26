@@ -1,0 +1,17 @@
+{
+  "explorer.fileNesting.enabled": true,
+
+  "explorer.fileNesting.patterns": {
+    "tsconfig.json": "tsconfig.*.json, env.d.ts",
+    "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
+    "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .oxlint*, oxlint*, .prettier*, prettier*, .editorconfig"
+  },
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "prettier.printWidth": 200, // 超过最大值换行
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "nuxt.isNuxtApp": false,
+  "[vue]": {
+    "editor.defaultFormatter": "Vue.volar"
+  }
+}
