@@ -19,6 +19,14 @@
       </el-form-item>
     </el-form>
     <div class="search-container">
+      <div class="quotation-actions" style="margin: 20px 0;">
+        <el-button type="primary" @click="showQuotationDialog" :disabled="!selectedProducts.length">
+          生成报价单
+        </el-button>
+        <el-button type="success" @click="showQuotationDrawer" :disabled="!quotationData.items.length">
+          查看当前报价单
+        </el-button>
+      </div>
       <el-table :data="paginatedData" stripe border style="width: 100%; margin-top: 20px"
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
@@ -68,14 +76,7 @@
         style="margin-top: 20px; justify-content: flex-end" />
     </div>
 
-    <div class="quotation-actions" style="margin: 20px 0;">
-      <el-button type="primary" @click="showQuotationDialog" :disabled="!selectedProducts.length">
-        生成报价单
-      </el-button>
-      <el-button type="success" @click="showQuotationDrawer" :disabled="!quotationData.items.length">
-        查看当前报价单
-      </el-button>
-    </div>
+
 
     <!-- 报价单抽屉 -->
     <el-drawer v-model="drawerVisible" title="当前报价单" size="60%" direction="rtl">
@@ -115,13 +116,26 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import productData from './mock.json'
 import QuotationSheet from './components/QuotationSheet.vue'
 
+onMounted(() => {
+  handleQuery()
+  console.log(getCPU(), getSize())
+})
 // 定义名称
 defineOptions({ name: 'ProductQuotation' })
+// 获取CPU种类
+const getCPU = () => {
+  const cpu = productData.map(item => item.cpu)
+  return [...new Set(cpu)]
+}
+const getSize = () => {
+  const size = productData.map(item => item.size)
+  return [...new Set(size)]
+}
 
 // 搜索关键词
 const queryParams = ref({ category: '', cpu: '', size: '', model: '' })
@@ -133,21 +147,7 @@ const resetQuery = () => {
     queryFormRef.value.resetFields()
   }
 }
-const handleQuery = () => {
-  // 可以添加额外的查询逻辑
-  console.log('查询参数:', queryParams.value)
-}
-
-// 过滤后的产品数据
-const filteredProducts = computed(() => {
-  return productData.filter((product) => {
-    return Object.keys(queryParams.value).every((key) => {
-      const queryValue = queryParams.value[key].toLowerCase()
-      if (!queryValue) return true // 如果查询值为空，则不过滤
-      return product[key].toLowerCase().includes(queryValue)
-    })
-  })
-})
+const filteredProducts = ref([])
 
 // 分页相关
 const currentPage = ref(1)
@@ -158,6 +158,17 @@ const paginatedData = computed(() => {
   const startIndex = (currentPage.value - 1) * pageSize.value
   const endIndex = startIndex + pageSize.value
   return filteredProducts.value.slice(startIndex, endIndex)
+})
+// 过滤后的产品数据
+const handleQuery = (() => {
+  console.log('查询参数:', queryParams.value)
+  filteredProducts.value = productData.filter((product) => {
+    return Object.keys(queryParams.value).every((key) => {
+      const queryValue = queryParams.value[key].toLowerCase()
+      if (!queryValue) return true // 如果查询值为空，则不过滤
+      return product[key].toLowerCase().includes(queryValue)
+    })
+  })
 })
 
 // 根据价格类型返回不同的tag样式
@@ -295,6 +306,8 @@ const createQuotation = () => {
   dialogVisible.value = false
   drawerVisible.value = true
 }
+
+
 
 // 导出PDF
 const exportPDF = () => {

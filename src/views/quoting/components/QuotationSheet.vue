@@ -70,7 +70,7 @@
                 @change="updateItemSubtotal(scope.row)" />
             </template>
           </el-table-column>
-          <el-table-column prop="subtotal" label="小计" width="120">
+          <el-table-column prop="subtotal" label="金额" width="120">
             <template #default="scope">
               <span>¥{{ formatPrice(scope.row.price * scope.row.quantity) }}</span>
             </template>
@@ -99,9 +99,11 @@
     <!-- 预览模式 -->
     <div v-else class="quotation-preview-mode" ref="printSection">
       <div class="quotation-header">
+        <img src="@/assets/qiyang.png" alt="logo" class="logo">
+        <h2>郑州启阳工控技术有限公司</h2>
         <h2>产品报价单</h2>
         <div class="quotation-info">
-          <div>
+          <!-- <div>
             <span class="label">报价单号：</span>
             <span>{{ editableQuotation.id }}</span>
           </div>
@@ -120,7 +122,7 @@
           <div>
             <span class="label">联系电话：</span>
             <span>{{ editableQuotation.phone }}</span>
-          </div>
+          </div> -->
           <!-- <div>
             <span class="label">价格类型：</span>
             <span>{{ editableQuotation.priceType }}</span>
@@ -137,7 +139,7 @@
               <th>型号</th>
               <th>单价</th>
               <th>数量</th>
-              <th>小计</th>
+              <th>金额</th>
             </tr>
           </thead>
           <tbody>
@@ -322,6 +324,7 @@ export default {
 <style scoped>
 .quotation-sheet {
   padding: 20px;
+  color: #000;
 }
 
 .quotation-actions {
@@ -353,16 +356,21 @@ export default {
 .quotation-preview-mode {
   padding: 20px;
   background-color: white;
+  color: #000;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 
 .quotation-header {
-  text-align: center;
   margin-bottom: 30px;
 }
 
+.logo {
+  height: 100px;
+  text-align: left;
+}
+
 .quotation-header h2 {
-  margin-bottom: 20px;
+  text-align: center;
 }
 
 .quotation-info {

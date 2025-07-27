@@ -19,6 +19,11 @@ const router = createRouter({
       name: 'accessory-quote',
       component: () => import('@/views/quoting/AccessoriesQuotation.vue'),
     },
+    {
+      path: '/create-quotation',
+      name: 'create-quotation',
+      component: () => import('@/views/quoting/CreateQuotation.vue'),
+    },
   ],
 })
 
