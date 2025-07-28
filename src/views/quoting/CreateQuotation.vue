@@ -1,128 +1,69 @@
 <template>
   <div class="create-quotation">
-    <div class="section-title">客户基本信息</div>
+
 
     <!-- 基本信息表单 -->
-    <el-form :model="quotationForm" :rules="rules" ref="quotationFormRef" :inline="true" class="basic-info-form">
-      <div class="form-row">
-        <!-- <el-form-item label="选择客户" prop="customerId">
-          <div class="select-button">
-            <el-button icon="Select" @click="selectCustomer">选择数据</el-button>
-          </div>
-        </el-form-item> -->
-        <el-form-item label="客户名称" prop="customer">
-          <el-input v-model="quotationForm.customer" placeholder="暂无内容" readonly />
-        </el-form-item>
-        <el-form-item label="客户联系人姓名" prop="contact">
-          <el-input v-model="quotationForm.contact" placeholder="暂无内容" />
-        </el-form-item>
-        <el-form-item label="客户联系人手机" prop="phone">
-          <el-input v-model="quotationForm.phone" placeholder="暂无内容" />
-        </el-form-item>
-      </div>
-
-      <div class="form-row">
-        <el-form-item label="报价日期" prop="quoteDate">
-          <el-date-picker v-model="quotationForm.quoteDate" type="date" placeholder="选择日期" format="YYYY-MM-DD" />
-        </el-form-item>
-        <el-form-item label="销售负责人" prop="salesPerson">
-          <div class="select-button">
-            <el-button icon="Plus" @click="selectSalesPerson">选择成员</el-button>
-          </div>
-        </el-form-item>
-        <el-form-item label="销售归属部门" prop="salesDept">
-          <div class="select-button">
-            <el-button icon="Plus" @click="selectSalesDept">选择部门</el-button>
-          </div>
-        </el-form-item>
-      </div>
+    <el-form :model="quotationForm" :rules="rules" ref="quotationFormRef" label-width="120px">
+      <el-form-item label="客户名称" prop="customer">
+        <el-input v-model="quotationForm.customer" placeholder="请输入客户名称" />
+      </el-form-item>
     </el-form>
 
-    <div class="section-title">报价单明细</div>
 
-
+    <!-- 产品选择 -->
     <div class="card-header">
-      <div></div>
-      <div class="action-buttons">
-        <el-button icon="Plus" @click="addRow">添加</el-button>
-        <el-button @click="addConfigRow">添加配置行</el-button>
-        <el-button icon="Document" @click="quickFill">快速填报</el-button>
-      </div>
+      <span>添加产品</span>
+      <el-button type="primary" @click="showProductSelector">选择产品</el-button>
     </div>
 
-    <!-- 产品表格 -->
-    <el-table :data="quotationItems" stripe border row-key="id" ref="quotationTableRef" :span-method="objectSpanMethod">
-      <el-table-column type="index" label="序号" width="60" align="center" />
-
-      <el-table-column prop="manufacturer" label="类别" resizable />
-      <el-table-column prop="model" label="型号" resizable />
-      <!-- <el-table-column prop="productCode" label="产品代码" /> -->
-      <el-table-column prop="spec" label="规格参数" resizable />
-      <el-table-column prop="unit" label="单位" width="60" align="center" resizable />
-      <el-table-column prop="price" label="单价" width="100" resizable>
+    <!-- 已选产品列表 -->
+    <el-table :data="quotationItems" stripe border>
+      <el-table-column type="index" label="序号" width="60" />
+      <el-table-column prop="category" label="类别" />
+      <el-table-column prop="model" label="型号" />
+      <el-table-column prop="price" label="单价">
         <template #default="{ row }">
-          <el-input v-model="row.price" placeholder="暂无内容" />
+          ¥{{ row.price }}
         </template>
       </el-table-column>
-      <el-table-column prop="quantity" label="数量" width="100" resizable>
+      <el-table-column prop="quantity" label="数量" width="120">
         <template #default="{ row }">
-          <el-input v-model.number="row.quantity" :min="1" @input="updateSubtotal(row)" />
+          <el-input-number v-model="row.quantity" :min="1" @change="updateSubtotal(row)" />
         </template>
       </el-table-column>
-      <el-table-column prop="subtotal" label="小计" width="100" resizable>
+      <el-table-column prop="subtotal" label="小计" width="120">
         <template #default="{ row }">
-          <el-input v-model="row.subtotal" placeholder="暂无内容" />
+          ¥{{ row.subtotal }}
         </template>
       </el-table-column>
-      <el-table-column prop="remark" label="备注" width="180" resizable>
-        <template #default="{ row }">
-          <el-input v-model="row.remark" placeholder="暂无内容" />
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="80" align="center" fixed="right">
-        <template #default="{ row, $index }">
-          <el-button type="text" icon="Delete" @click="removeRow($index)"></el-button>
+      <el-table-column label="操作" width="120">
+        <template #default="{ $index }">
+          <el-button type="danger" icon="Delete" circle @click="removeItem($index)" />
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- 价格汇总信息 -->
-    <!-- <div class="price-summary">
+    <div class="total-amount" style="margin-top: 20px; text-align: right">
+      <span style="font-size: 16px; margin-right: 10px">总计金额:</span>
+      <span style="font-size: 20px; color: #f56c6c; font-weight: bold">¥{{ totalAmount }}</span>
+    </div>
 
-
-      <div class="summary-row">
-        <div class="summary-item">
-          <span class="label">销售原价总额(含税)/元</span>
-          <el-input v-model="originalTotal2" placeholder="0.00" readonly />
+    <!-- 备注信息 -->
+    <el-card class="box-card" style="margin-top: 20px">
+      <template #header>
+        <div class="card-header">
+          <span>备注信息</span>
         </div>
-        <div class="summary-item">
-          <span class="label">优惠金额/元</span>
-          <el-input v-model="discountAmount2" placeholder="优惠金额默认从金额比例计算，均摊到每个产品" />
-        </div>
-        <div class="summary-item">
-          <span class="label">整单折扣率 %</span>
-          <el-input v-model="discountRate2" placeholder="暂无内容" readonly />
-        </div>
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-item">
-          <span class="label">销售订单金额(含税)/元</span>
-          <el-input v-model="finalTotal2" placeholder="0.00" readonly />
-        </div>
-        <div class="summary-item">
-          <span class="label">金额大写</span>
-          <el-input v-model="amountInWords2" placeholder="零" readonly />
-        </div>
-        <div class="summary-item">
-          <span class="label">报价毛利率 %</span>
-          <el-input v-model="profitRate2" placeholder="暂无内容" readonly />
-        </div>
-      </div>
-    </div> -->
+      </template>
+      <el-form :model="quotationForm">
+        <el-form-item>
+          <el-input v-model="quotationForm.remarks" type="textarea" :rows="3" placeholder="请输入备注信息" />
+        </el-form-item>
+      </el-form>
+    </el-card>
 
     <!-- 操作按钮 -->
-    <div class="bottom-actions">
+    <div class="action-buttons" style="margin-top: 20px; text-align: center">
       <el-button @click="resetForm">重置</el-button>
       <el-button type="primary" @click="saveQuotation">保存报价单</el-button>
       <el-button type="success" @click="previewQuotation">预览</el-button>
