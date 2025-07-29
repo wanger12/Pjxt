@@ -139,21 +139,8 @@ const resetQuery = () => {
     queryFormRef.value.resetFields()
   }
 }
-const handleQuery = () => {
-  // 可以添加额外的查询逻辑
-  console.log('查询参数:', queryParams.value)
-}
 
-// 过滤后的产品数据
-const filteredProducts = computed(() => {
-  return productData.filter((product) => {
-    return Object.keys(queryParams.value).every((key) => {
-      const queryValue = queryParams.value[key].toLowerCase()
-      if (!queryValue) return true // 如果查询值为空，则不过滤
-      return product[key].toLowerCase().includes(queryValue)
-    })
-  })
-})
+const filteredProducts = ref([])
 
 // 分页相关
 const currentPage = ref(1)
