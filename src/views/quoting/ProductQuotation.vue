@@ -19,8 +19,7 @@
       </el-form-item>
     </el-form>
     <div class="search-container">
-      <el-table :data="paginatedData" stripe border style="width: 100%; margin-top: 20px"
-        @selection-change="handleSelectionChange">
+      <el-table :data="paginatedData" stripe border style="width: 100%; margin-top: 20px">
         <el-table-column type="selection" width="55" />
         <el-table-column prop="category" label="类别" width="180" />
         <el-table-column prop="cpu" label="CPU" width="120" />
@@ -142,6 +141,7 @@ const handleQuery = () => {
 const filteredProducts = computed(() => {
   return productData.filter((product) => {
     return Object.keys(queryParams.value).every((key) => {
+      if (!queryParams.value[key]) return true // 如果查询值为空，则不过滤  
       const queryValue = queryParams.value[key].toLowerCase()
       if (!queryValue) return true // 如果查询值为空，则不过滤
       return product[key].toLowerCase().includes(queryValue)
