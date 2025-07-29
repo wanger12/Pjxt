@@ -9,14 +9,17 @@
         <el-menu-item index="product-quote">
           <el-icon>
             <Memo />
-          </el-icon>
-          产品报价
+          </el-icon> 产品信息
         </el-menu-item>
         <el-menu-item index="accessory-quote">
           <el-icon>
             <Memo />
-          </el-icon>
-          配件信息
+          </el-icon> 配件信息
+        </el-menu-item>
+        <el-menu-item index="create-quotation">
+          <el-icon>
+            <Memo />
+          </el-icon> 创建报价单
         </el-menu-item>
       </el-menu>
     </el-aside>
